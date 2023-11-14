@@ -1,0 +1,9 @@
+flask>=2.3.3
+flask-smorest>=0.42.1
+python-dotenv
+marshmallow
+sqlalchemy
+flask-sqlalchemy
+Flask-JWT-Extended
+passlib
+flask-migrate
