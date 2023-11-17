@@ -6,4 +6,6 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 ## Copy all files from current directory to /app in container
 COPY . . 
 # CMD ["flask", "run", "--host", "0.0.0.0"] # Local
-CMD ["gunicorn", "--bind", "0.0.0.0:80", "app:create_app()"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:80", "app:create_app()"] # Production without migration
+# Running database migrations in production
+CMD ["/bin/bash", "docker-entrypoint.sh"] 

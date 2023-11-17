@@ -7,5 +7,5 @@ flask-sqlalchemy
 Flask-JWT-Extended
 passlib
 flask-migrate
-gunicorn
-# psycopg2-binary
+gunicorn # form deploy in Production with eg Render.com
+psycopg2-binary  # for postgresql
