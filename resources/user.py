@@ -24,13 +24,15 @@ blp = Blueprint("Users", "users", description="Operations on users")
 
 def send_simple_message(to, subject, body):
     domain = os.environ.get("MAILGUN_DOMAIN")
+    print(os.getenv("MAILGUN_DOMAIN"))
+    print(os.getenv("MAILGUN_API_KEY"))
     print(f"domain: {domain} - to: {to} - subject: {subject} - body: {body}")
     try:
         return requests.post(
             f"https://api.mailgun.net/v3/{domain}/messages",
             auth=("api", os.getenv("MAILGUN_API_KEY")),
             data={
-                "from": "Alan <mailgun@{domain}>",
+                "from": f"Alan <mailgun@{domain}>",
                 "to": [to],
                 "subject": subject,
                 "text": body
