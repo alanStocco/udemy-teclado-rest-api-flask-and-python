@@ -24,16 +24,21 @@ blp = Blueprint("Users", "users", description="Operations on users")
 
 def send_simple_message(to, subject, body):
     domain = os.environ.get("MAILGUN_DOMAIN")
-    return requests.post(
-        f"https://api.mailgun.net/v3/{domain}/messages",
-        auth=("api", os.getenv("MAILGUN_API_KEY")),
-        data={
-            "from": "Alan <mailgun@{domain}>",
-            "to": [to],
-            "subject": subject,
-            "text": body
-        }
-    )
+    print(f"domain: {domain} - to: {to} - subject: {subject} - body: {body}")
+    try:
+        return requests.post(
+            f"https://api.mailgun.net/v3/{domain}/messages",
+            auth=("api", os.getenv("MAILGUN_API_KEY")),
+            data={
+                "from": "Alan <mailgun@{domain}>",
+                "to": [to],
+                "subject": subject,
+                "text": body
+            }        
+        )
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return {"message": "An error occurred while sending the email"}, 500
 
 @blp.route("/register")
 class UserRegister(MethodView):
