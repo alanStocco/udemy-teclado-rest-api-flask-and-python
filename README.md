@@ -32,3 +32,18 @@ Links:
 6. Run Docker Desktop if needed
 7. Build Docker `docker build -t flask-smorest-api .`
 8. Run Docker `docker run -dp 5005:5000 -w /app -v "$(pwd):/app" flask-smorest-api`
+
+### To run the send email via Maligun and Redis, you need to run the following commands:
+
+In one shell build the Docker image:
+
+    docker build -t flask-rest-api-recording-email .
+
+    docker run -p 5000:5000 flask-rest-api-recording-email sh -c "flask run --host 0.0.0.0"
+
+In one shell, run the Redis server:
+
+    docker run -w /app flask-rest-api-recording-email sh -c "rq worker -u rediss://red-clf30ikp3ifc73emf7gg:2U6HfmgDNaipohfmvOgGYb0VmCELMITE@frankfurt-redis.render.com:6379 emails"
+
+    
+
