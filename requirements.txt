@@ -10,3 +10,5 @@ flask-migrate
 gunicorn # form deploy in Production with eg Render.com
 psycopg2-binary  # for postgresql
 requests
+rq
+redis

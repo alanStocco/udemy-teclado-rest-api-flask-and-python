@@ -1,6 +1,7 @@
 import os 
 import requests
-from sqlite3 import IntegrityError
+from flask import current_app
+
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
@@ -18,29 +19,11 @@ from db import db
 from blocklist import BLOCKLIST
 from models import UserModel
 from schemas import UserSchema, UserRegisterSchema
+from tasks import send_user_registration_email 
 
+# from sqlite3 import IntegrityError
 
 blp = Blueprint("Users", "users", description="Operations on users")
-
-def send_simple_message(to, subject, body):
-    domain = os.environ.get("MAILGUN_DOMAIN")
-    print(os.getenv("MAILGUN_DOMAIN"))
-    print(os.getenv("MAILGUN_API_KEY"))
-    print(f"domain: {domain} - to: {to} - subject: {subject} - body: {body}")
-    try:
-        return requests.post(
-            f"https://api.mailgun.net/v3/{domain}/messages",
-            auth=("api", os.getenv("MAILGUN_API_KEY")),
-            data={
-                "from": f"Alan <mailgun@{domain}>",
-                "to": [to],
-                "subject": subject,
-                "text": body
-            }        
-        )
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return {"message": "An error occurred while sending the email"}, 500
 
 @blp.route("/register")
 class UserRegister(MethodView):
@@ -65,12 +48,8 @@ class UserRegister(MethodView):
         except IntegrityError:
             db.session.rollback()
             abort(409, message="User already exists")
-        
-        send_simple_message(
-            to=user.email,
-            subject="Successfully signed up",
-            body=f"Hi {user.username}! You have successfully signed up to the Stores REST API.",
-        )
+        # Send email in background using queue with mq
+        current_app.queue.enqueue(send_user_registration_email, user.email, user.username)        
         
         return {"message": "User created successfully"}, 201
 
